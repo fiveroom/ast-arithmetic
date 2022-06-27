@@ -1,0 +1,3 @@
+interface Type {
+    d: boolean
+}
