@@ -505,15 +505,29 @@ const runExcelCode = (str) => {
 
     console.log(isTrue);
 
+    console.log(getCodeStr(ast));
+
+}
+
+const getCodeStr = (ast) => {
+    const result = new Set();
+    const func = (node) => {
+        if (node.type === 'CallExpression') {
+            if(/DEJ|DEJ_MX/.test(node.value)){
+                result.add(node.param[0].value.match(/"(.*?)"/)[1])
+            } else {
+                node.param.forEach(item => func(item))
+            }
+        } else if(node.type === 'ExpressionStatement') {
+            node.body.forEach(item => func(item))
+        }
+    }
+    func(ast);
+    return result
 }
 
 
-runExcelCode('1 + 23 +ROUND(3, 1) + DEJ("123") + IF(1 = 2, 2, 3)')
-
-
-
-
-
+runExcelCode('1 + 23 +ROUND(3, 1) + ROUND(DEJ("123") * DEJ_MX("ddd", "dfdf"), 1) + IF(1 = 2, 2, 3) + DEJ("123") + DEJ("ddd") + DEJ_MX("fkfk", "klkl")')
 
 
 
